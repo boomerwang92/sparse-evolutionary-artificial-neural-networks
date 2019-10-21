@@ -47,7 +47,7 @@ from keras import optimizers
 import numpy as np
 from keras import backend as K
 #Please note that in newer versions of keras_contrib you may encounter some import errors. You can find a fix for it on the Internet, or as an alternative you can try other activations functions.
-from keras_contrib.layers.advanced_activations import SReLU
+#from keras_contrib.layers.advanced_activations import SReLU
 from keras.datasets import cifar10
 from keras.utils import np_utils
 
@@ -116,10 +116,10 @@ class SET_MLP_CIFAR10:
         self.w3 = None
         self.w4 = None
 
-        # initialize weights for SReLu activation function
-        self.wSRelu1 = None
-        self.wSRelu2 = None
-        self.wSRelu3 = None
+#         initialize weights for SReLu activation function
+#        self.wSRelu1 = None
+#        self.wSRelu2 = None
+#        self.wSRelu3 = None
 
         # create a SET-MLP model
         self.create_model()
@@ -133,14 +133,14 @@ class SET_MLP_CIFAR10:
         # create a SET-MLP model for CIFAR10 with 3 hidden layers
         self.model = Sequential()
         self.model.add(Flatten(input_shape=(32, 32, 3)))
-        self.model.add(Dense(4000, name="sparse_1",kernel_constraint=MaskWeights(self.wm1),weights=self.w1))
-        self.model.add(SReLU(name="srelu1",weights=self.wSRelu1))
+        self.model.add(Dense(4000, name="sparse_1",activation='relu', kernel_constraint=MaskWeights(self.wm1), weights=self.w1))
+#        self.model.add(SReLU(name="srelu1",weights=self.wSRelu1))
         self.model.add(Dropout(0.3))
-        self.model.add(Dense(1000, name="sparse_2",kernel_constraint=MaskWeights(self.wm2),weights=self.w2))
-        self.model.add(SReLU(name="srelu2",weights=self.wSRelu2))
+        self.model.add(Dense(1000, name="sparse_2", activation='relu', kernel_constraint=MaskWeights(self.wm2),weights=self.w2))
+#        self.model.add(SReLU(name="srelu2",weights=self.wSRelu2))
         self.model.add(Dropout(0.3))
-        self.model.add(Dense(4000, name="sparse_3",kernel_constraint=MaskWeights(self.wm3),weights=self.w3))
-        self.model.add(SReLU(name="srelu3",weights=self.wSRelu3))
+        self.model.add(Dense(4000, name="sparse_3", activation='relu', kernel_constraint=MaskWeights(self.wm3),weights=self.w3))
+#        self.model.add(SReLU(name="srelu3",weights=self.wSRelu3))
         self.model.add(Dropout(0.3))
         self.model.add(Dense(self.num_classes, name="dense_4",weights=self.w4)) #please note that there is no need for a sparse output layer as the number of classes is much smaller than the number of input hidden neurons
         self.model.add(Activation('softmax'))
@@ -179,9 +179,9 @@ class SET_MLP_CIFAR10:
         self.w3 = self.model.get_layer("sparse_3").get_weights()
         self.w4 = self.model.get_layer("dense_4").get_weights()
 
-        self.wSRelu1 = self.model.get_layer("srelu1").get_weights()
-        self.wSRelu2 = self.model.get_layer("srelu2").get_weights()
-        self.wSRelu3 = self.model.get_layer("srelu3").get_weights()
+#        self.wSRelu1 = self.model.get_layer("srelu1").get_weights()
+#        self.wSRelu2 = self.model.get_layer("srelu2").get_weights()
+#        self.wSRelu3 = self.model.get_layer("srelu3").get_weights()
 
         [self.wm1, self.wm1Core] = self.rewireMask(self.w1[0], self.noPar1)
         [self.wm2, self.wm2Core] = self.rewireMask(self.w2[0], self.noPar2)
